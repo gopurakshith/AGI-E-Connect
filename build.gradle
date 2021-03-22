@@ -1,28 +1,76 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.onesignal.androidsdk.onesignal-gradle-plugin' version '0.7.0'
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+apply plugin: 'com.android.application'
 
-buildscript {
-    ext.kotlin_version = '1.2.0'
-    repositories {
-        google()
-        jcenter()
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'rakshith'
+            keyPassword '15h61a04e1'
+            storeFile file('E:/exp/APPSAPK.jks')
+            storePassword 'cvsrecec'
+        }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.onesignal.example"
+        // TODO: Please update the OneSignal ID below to yours!
+        manifestPlaceholders = [onesignal_app_id               : "fcd202fe-68da-4835-aa39-2660377b9a83",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "REMOTE"]
+        applicationId "rakshith.notifications.com.cse"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 9
+        versionName "7.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+        signingConfig signingConfigs.config
+    }
+    buildTypes {
+        debug {
+            debuggable false
+        }
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+    productFlavors {
     }
 }
 
-allprojects {
-    repositories {
-        maven { url "https://jitpack.io" }
-        google()
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
+    implementation 'com.android.support:support-v4:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support:design:26.1.0'
+    compile 'com.onesignal:OneSignal:[3.6.1,3.99.99)'
+    // Required for geotagging
+    compile 'com.google.android.gms:play-services-location:11.6.2'
+    // OneSignal requires at least version 7.0.0 of GMS but the newest version is recommend.
+    // Required for OneSignal, even if you have added FCM.
+    compile 'com.google.android.gms:play-services-gcm:11.6.2'
 }
